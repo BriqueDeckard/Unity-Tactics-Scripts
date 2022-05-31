@@ -6,6 +6,9 @@ public class TacticsMove : MonoBehaviour
 {
     protected List<Tile> selectableTiles = new List<Tile>();
 
+    /// <summary>
+    /// All the tiles of the map
+    /// </summary>
     GameObject[] tiles;
 
     Stack<Tile> path = new Stack<Tile>();
@@ -85,12 +88,20 @@ public class TacticsMove : MonoBehaviour
         return tile;
     }
 
+    /// <summary> 
+    /// Compute each tile of the map and find the neighbors if needed.
+    /// </summary>
     public void ComputeAdjacencyLists(float jumpHeight, Tile target)
     {
-        // Debug.Log("Compute : " + tiles.Length + " tiles.");
+        // For each tile of the map
         foreach (GameObject tile in tiles)
         {
+            // Check if this is a tile
             Tile t = tile.GetComponent<Tile>();
+            if(t == null){
+                return;
+            }
+            // else find the neighbors
             t.FindNeighbors (jumpHeight, target);
         }
     }

@@ -35,6 +35,12 @@ public class Tile : MonoBehaviour
     public bool walkable = true;
 
     /// <summary>
+    /// can you shoot something that is on the tile
+
+    /// </summary>
+    public bool accessibleToShooting = false;
+
+    /// <summary>
     ///
     /// </summary>
     public List<Tile> adjacencyList = new List<Tile>();
@@ -105,6 +111,10 @@ public class Tile : MonoBehaviour
         {
             GetComponent<Renderer>().material.color = Color.yellow;
         }
+        else if (accessibleToShooting)
+        {
+            GetComponent<Renderer>().material.color = Color.cyan;
+        }
         else
         {
             GetComponent<Renderer>().material.color = Color.white;
@@ -127,34 +137,45 @@ public class Tile : MonoBehaviour
         f = g = h = 0;
     }
 
+    /// <summary>
+    /// Reset the tile and check for all the directions if there is a "neighbor".
+    /// </summary>
     public void FindNeighbors(float jumpHeight, Tile target)
     {
+        // Reset the tile
         Reset();
 
+        // Check all the directions
         CheckTile(Vector3.forward, jumpHeight, target);
         CheckTile(-Vector3.forward, jumpHeight, target);
         CheckTile(Vector3.right, jumpHeight, target);
         CheckTile(-Vector3.right, jumpHeight, target);
     }
 
+    /// <summary>
+    ///
+    /// </summary>
     public void CheckTile(Vector3 direction, float jumpHeight, Tile target)
     {
+        // Half the size of the box in each dimension.
         Vector3 halfExtents =
             new Vector3(0.25f, (tileHeight + jumpHeight) / 2, 0.25f);
 
+        // Find all colliders touching or inside of the given box.
         Collider[] colliders =
             Physics.OverlapBox(transform.position + direction, halfExtents);
 
+        // For each collider
         foreach (Collider item in colliders)
         {
+            // get the tile object
             Tile tile = item.GetComponent<Tile>();
 
             // There is a tile and we can get there.
-            if (tile != null && walkable)
+            if (tile != null && tile.walkable)
             {
-                RaycastHit hit;
-
-                // make sure that there is nothing on the top of the tile
+                // make sure there is nothing on top of the tile and if so, add it to the adjacency list.
+                RaycastHit hit;                
                 if (
                     !Physics
                         .Raycast(tile.transform.position,
