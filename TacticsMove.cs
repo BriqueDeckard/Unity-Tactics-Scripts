@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TacticsMove : MonoBehaviour
+public class TacticsMove : TurnBasedSystem
 {
     protected List<Tile> selectableTiles = new List<Tile>();
 
@@ -48,9 +48,6 @@ public class TacticsMove : MonoBehaviour
 
     bool movingEdge = false;
 
-    // Only true when it is this unit turn
-    protected bool turn = false;
-
     Vector3 velocity = new Vector3();
 
     Vector3 heading = new Vector3();
@@ -59,15 +56,16 @@ public class TacticsMove : MonoBehaviour
 
     public Tile actualTargetTile;
 
-    protected void Init()
+    new protected void Init()
     {
+        base.Init();
         tiles = GameObject.FindGameObjectsWithTag("Tile");
 
         // Debug.Log(tiles.Length + " tiles.");
         halfHeight = GetComponent<Collider>().bounds.extents.y;
 
         // add ourselves to the turn manager (to the dictionnary)
-        TurnManager.AddUnit(this);
+        // TurnManager.AddUnit(this);
     }
 
     public void GetCurrentTile()
@@ -202,7 +200,7 @@ public class TacticsMove : MonoBehaviour
             RemoveSelectableTiles();
             moving = false;
 
-            TurnManager.EndTurn();
+            EndTurn();
         }
     }
 
@@ -466,17 +464,5 @@ public class TacticsMove : MonoBehaviour
         tiles.Remove (lowest);
 
         return lowest;
-    }
-
-    public void BeginTurn()
-    {
-        Debug.Log("Begin turn");
-        turn = true;
-    }
-
-    public void EndTurn()
-    {
-        Debug.Log("End turn");
-        turn = false;
     }
 }

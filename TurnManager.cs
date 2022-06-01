@@ -13,8 +13,8 @@ public class TurnManager : MonoBehaviour
     /// the string is for a tag as each team is based on a tag (NPC team / Player Team)
     /// the list hold all the member of a team
     ///</summary>
-    static Dictionary<string, List<TacticsMove>>
-        units = new Dictionary<string, List<TacticsMove>>();
+    static Dictionary<string, List<TurnBasedSystem>>
+        units = new Dictionary<string, List<TurnBasedSystem>>();
 
     // basically the key for who the turn is. String is the tag of the team that
     static Queue<string> turnKey = new Queue<string>();
@@ -22,7 +22,7 @@ public class TurnManager : MonoBehaviour
     ///<summary>
     /// Queue for current team who's turn is
     ///</summary>
-    static Queue<TacticsMove> turnTeam = new Queue<TacticsMove>();
+    static Queue<TurnBasedSystem> turnTeam = new Queue<TurnBasedSystem>();
 
     // Start is called before the first frame update
     void Start()
@@ -36,6 +36,7 @@ public class TurnManager : MonoBehaviour
         // this happen only the first time so this is mostly for the first run
         if (turnTeam.Count == 0)
         {
+            Debug.Log("turnTeam.Count == 0");
             InitTeamTurnQueue();
         }
     }
@@ -43,12 +44,14 @@ public class TurnManager : MonoBehaviour
     /// Initialize the team turn queue
     static void InitTeamTurnQueue()
     {
+        Debug.Log("InitTeamTurnQueue");
         // Get it from the units --> turnKey is the currently active team
         // we're peeking into the units with the head of the keys
         //
-        List<TacticsMove> teamList = units[turnKey.Peek()];
+        List<TurnBasedSystem> teamList = units[turnKey.Peek()];
+        Debug.Log("TeamList : " + teamList.Count);
 
-        foreach (TacticsMove unit in teamList)
+        foreach (TurnBasedSystem unit in teamList)
         {
             turnTeam.Enqueue (unit);
         }
@@ -58,6 +61,7 @@ public class TurnManager : MonoBehaviour
 
     public static void StartTurn()
     {
+        Debug.Log("Start turn");
         // Check that the team is not empty
         if (turnTeam.Count > 0)
         {
@@ -67,7 +71,7 @@ public class TurnManager : MonoBehaviour
 
     public static void EndTurn()
     {
-        TacticsMove unit = turnTeam.Dequeue();
+        TurnBasedSystem unit = turnTeam.Dequeue();
 
         unit.EndTurn();
 
@@ -84,14 +88,14 @@ public class TurnManager : MonoBehaviour
     }
 
     // how do we had a unit
-    public static void AddUnit(TacticsMove unit)
+    public static void AddUnit(TurnBasedSystem unit)
     {
-        List<TacticsMove> list;
+        List<TurnBasedSystem> list;
 
         // we have to make sur that the unit tag has been added to the dictionary
         if (!units.ContainsKey(unit.tag))
         {
-            list = new List<TacticsMove>();
+            list = new List<TurnBasedSystem>();
             units[unit.tag] = list;
 
             // Add the team to the turn queue
@@ -104,6 +108,7 @@ public class TurnManager : MonoBehaviour
         {
             list = units[unit.tag];
         }
+        Debug.Log("Add unit");
         list.Add (unit);
     }
 }
