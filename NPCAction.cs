@@ -5,7 +5,7 @@ using UnityEngine;
 /// <summary>
 /// Npc movement
 /// </summary>
-public class NPCMove : TacticsMove
+public class NPCAction : TacticsAction
 {
     GameObject target;
 
@@ -15,7 +15,9 @@ public class NPCMove : TacticsMove
     // Start is called before the first frame update
     void Start()
     {
+        Debug.Log("11. NPCAction.Start() - BEGIN");
         Init();
+        Debug.Log("12. NPCAction.Start() - END");
     }
 
 

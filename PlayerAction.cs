@@ -5,12 +5,14 @@ using UnityEngine;
 /// <summary>
 /// Player movement
 /// </summary>
-public class PlayerMove : TacticsMove
+public class PlayerAction : TacticsAction
 {
     // Start is called before the first frame update
     void Start()
     {
+        Debug.Log("3. PlayerAction.Start() - BEGIN");
         Init();
+        Debug.Log("10. PlayerAction.Start() - END");
     }
 
     // Update is called once per frame

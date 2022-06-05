@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Text.Json;
 using UnityEngine;
 
-public class TacticsMove : MonoBehaviour
+public class TacticsAction : MonoBehaviour
 {
     protected List<Tile> selectableTiles = new List<Tile>();
 
@@ -61,6 +62,8 @@ public class TacticsMove : MonoBehaviour
 
     protected void Init()
     {
+        // TODO: 3
+        Debug.Log("4. TacticsAction.Init() - BEGIN");
         tiles = GameObject.FindGameObjectsWithTag("Tile");
 
         // Debug.Log(tiles.Length + " tiles.");
@@ -68,6 +71,7 @@ public class TacticsMove : MonoBehaviour
 
         // add ourselves to the turn manager (to the dictionnary)
         TurnManager.AddUnit(this);
+        Debug.Log("9. TacticsAction.Init() - END");
     }
 
     public void GetCurrentTile()
@@ -88,7 +92,7 @@ public class TacticsMove : MonoBehaviour
         return tile;
     }
 
-    /// <summary> 
+    /// <summary>
     /// Compute each tile of the map and find the neighbors if needed.
     /// </summary>
     public void ComputeAdjacencyLists(float jumpHeight, Tile target)
@@ -98,9 +102,11 @@ public class TacticsMove : MonoBehaviour
         {
             // Check if this is a tile
             Tile t = tile.GetComponent<Tile>();
-            if(t == null){
+            if (t == null)
+            {
                 return;
             }
+
             // else find the neighbors
             t.FindNeighbors (jumpHeight, target);
         }
@@ -144,21 +150,33 @@ public class TacticsMove : MonoBehaviour
     {
         path.Clear();
         tile.target = true;
+
+        // We set moving to true so that the "update" method of the current team (player or NPC) can launch the "Move()" method.
         moving = true;
 
-        // create the path
+        // -- CREATE THE PATCH
+        // We start from the target tile.
         Tile next = tile;
         while (next != null)
         {
+            // we add the tile to the path
             path.Push (next);
+
+            // and the parent tile becomes the next one, to start again until there are no more parent tiles, and the path has been traced.
             next = next.parent;
         }
     }
 
+    /// <summary>
+    /// Move() is called at each frame if the boolean "moving" is true.
+    /// </summary>
     public void Move()
     {
+        // If a path exists (defined by "MoveToTile()")
         if (path.Count > 0)
         {
+            // We create a vector that corresponds to the position of the tile that is on top of the stack
+            Debug.Log("TacticsAction.Move() - path.Count: " + path.Count);
             Tile t = path.Peek();
             Vector3 target = t.transform.position;
 
@@ -166,9 +184,10 @@ public class TacticsMove : MonoBehaviour
             target.y +=
                 halfHeight + t.GetComponent<Collider>().bounds.extents.y;
 
-            // Reach the tile ?
+            // If there is a significant distance between the position of the current unit and the target tile
             if (Vector3.Distance(transform.position, target) >= 0.05f)
             {
+                // Check if there is a difference in height to know if you should jump
                 bool jump = transform.position.y != target.y;
 
                 if (jump)
@@ -177,17 +196,20 @@ public class TacticsMove : MonoBehaviour
                 }
                 else
                 {
-                    // Calculate heading
+                    // Calculate and normalize the direction to take.
                     CalculateHeadingTo (target);
 
-                    // Set velocity
+                    // Set velocity (direction * moveSpeed)
                     SetHorizontalVelocity();
                 }
 
                 // Locomotion
+                // Set the direction of this unit
                 transform.forward = heading;
+                // Initiate the movement of this unit
                 transform.position += velocity * Time.deltaTime;
             }
+            // The distance between this unit and the target tile is not significant
             else
             {
                 // Tile center reached
@@ -197,11 +219,14 @@ public class TacticsMove : MonoBehaviour
                 path.Pop();
             }
         }
+        // If a path does not exist (has not been defined by MoveToTile)
         else
         {
+            // Delete the display of the accessible tiles.
             RemoveSelectableTiles();
+            // define moving to false to give back the hand to this unit
             moving = false;
-
+            // End the turn
             TurnManager.EndTurn();
         }
     }
@@ -223,6 +248,8 @@ public class TacticsMove : MonoBehaviour
     void CalculateHeadingTo(Vector3 target)
     {
         heading = target - transform.position;
+        // Makes this vector have a magnitude of 1.
+        // When normalized, a vector keeps the same direction but its length is 1.0.
         heading.Normalize();
     }
 
@@ -451,8 +478,8 @@ public class TacticsMove : MonoBehaviour
 
     protected Tile FindLowestF(List<Tile> tiles)
     {
-        Debug.Log("FindLowestF");
-        Debug.Log("tiles : " + tiles.Count);
+        // Debug.Log("TacticsAction.FindLowestF()");
+        // Debug.Log("tiles : " + tiles.Count);
         Tile lowest = tiles[0];
 
         foreach (Tile t in tiles)
@@ -470,13 +497,15 @@ public class TacticsMove : MonoBehaviour
 
     public void BeginTurn()
     {
-        Debug.Log("Begin turn");
+        Debug.Log("18. TacticsAction.BeginTurn() - BEGIN");
         turn = true;
+        Debug.Log("19. TacticsAction.BeginTurn() - END");
     }
 
     public void EndTurn()
     {
-        Debug.Log("End turn");
+        Debug.Log("24. TacticsAction.EndTurn() - BEGIN");
         turn = false;
+        Debug.Log("25. TacticsAction.EndTurn() - END");
     }
 }
