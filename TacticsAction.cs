@@ -41,6 +41,11 @@ public class TacticsAction : MonoBehaviour
     public bool moving = false;
 
     /// <summary>
+    /// Is the player firing ?
+    /// </summary>
+    public bool firing = false;
+
+    /// <summary>
     /// Is the player falling down ?
     /// </summary>
     bool fallingDown = false;

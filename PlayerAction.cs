@@ -7,6 +7,8 @@ using UnityEngine;
 /// </summary>
 public class PlayerAction : TacticsAction
 {
+    public static bool displayMovingForPlayer = true;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -26,12 +28,19 @@ public class PlayerAction : TacticsAction
             return;
         }
 
-        if (!moving)
+        if (!moving && !firing)
         {
-            FindSelectableTiles();
+            if (displayMovingForPlayer)
+            {
+                FindSelectableTiles();
+            }
+            else if (!displayMovingForPlayer)
+            {
+                RemoveSelectableTiles();
+            }
             CheckMouse();
         }
-        else
+        else if (moving)
         {
             Move();
         }
