@@ -46,7 +46,9 @@ public class Tile : MonoBehaviour
     /// <summary>
     ///
     /// </summary>
-    public List<Tile> adjacencyList = new List<Tile>();
+    public List<Tile> adjacencyListForMoving = new List<Tile>();
+
+    public List<Tile> adjacencyListForShooting = new List<Tile>();
 
     // **** NEEDED FOR BFS ****
     /// <summary>
@@ -134,7 +136,8 @@ public class Tile : MonoBehaviour
 
     public void Reset()
     {
-        adjacencyList.Clear();
+        adjacencyListForMoving.Clear();
+        adjacencyListForShooting.Clear();
 
         current = false;
         target = false;
@@ -154,16 +157,16 @@ public class Tile : MonoBehaviour
     /// <summary>
     /// Reset the tile and check for all the directions if there is a "neighbor".
     /// </summary>
-    public void FindNeighbors(float jumpHeight, Tile target)
+    public void FindNeighborsForMoving(float jumpHeight, Tile target)
     {
         // Reset the tile
         Reset();
 
         // Check all the directions
-        CheckTile(Vector3.forward, jumpHeight, target);
-        CheckTile(-Vector3.forward, jumpHeight, target);
-        CheckTile(Vector3.right, jumpHeight, target);
-        CheckTile(-Vector3.right, jumpHeight, target);
+        CheckTileForMoving(Vector3.forward, jumpHeight, target);
+        CheckTileForMoving(-Vector3.forward, jumpHeight, target);
+        CheckTileForMoving(Vector3.right, jumpHeight, target);
+        CheckTileForMoving(-Vector3.right, jumpHeight, target);
     }
 
     public void CheckTileForShooting(
@@ -201,12 +204,12 @@ public class Tile : MonoBehaviour
                     (tile == target)
                 )
                 {
-                    adjacencyList.Add (tile);
+                    adjacencyListForShooting.Add (tile);
                 }
                 else
                 {
                     tile.hasEnemy = true;
-                    adjacencyList.Add (tile);
+                    adjacencyListForShooting.Add (tile);
                 }
             }
         }
@@ -215,7 +218,7 @@ public class Tile : MonoBehaviour
     /// <summary>
     ///
     /// </summary>
-    public void CheckTile(Vector3 direction, float jumpHeight, Tile target)
+    public void CheckTileForMoving(Vector3 direction, float jumpHeight, Tile target)
     {
         // Half the size of the box in each dimension.
         Vector3 halfExtents =
@@ -245,12 +248,12 @@ public class Tile : MonoBehaviour
                     (tile == target)
                 )
                 {
-                    adjacencyList.Add (tile);
+                    adjacencyListForMoving.Add (tile);
                 }
                 else
                 {
                     tile.hasSomethingOnIt = true;
-                    adjacencyList.Add (tile);
+                    // adjacencyListForMoving.Add (tile);
                 }
             }
         }

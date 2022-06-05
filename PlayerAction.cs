@@ -76,7 +76,7 @@ public class PlayerAction : TacticsAction
                 {
                     Tile t = hit.collider.GetComponent<Tile>();
 
-                    if (t.selectable)
+                    if (t.selectable && !t.hasSomethingOnIt)
                     {
                         MoveToTile (t);
                     }

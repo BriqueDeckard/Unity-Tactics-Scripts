@@ -22,7 +22,7 @@ public class NPCAction : TacticsAction
 
 
     new public void FindSelectableTiles(){
-        ComputeAdjacencyLists(jumpHeight, null);
+        ComputeAdjacencyListsForMoving(jumpHeight, null);
 
         GetCurrentTile();
 
@@ -40,7 +40,7 @@ public class NPCAction : TacticsAction
 
             if (t.distance < move)
             {
-                foreach (Tile tile in t.adjacencyList)
+                foreach (Tile tile in t.adjacencyListForMoving)
                 {
                     if (!tile.visited)
                     {

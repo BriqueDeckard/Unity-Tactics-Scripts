@@ -10,9 +10,9 @@ public class TacticsAction : MonoBehaviour
     protected List<Tile> attackableTiles = new List<Tile>();
 
     /// <summary>
-    /// All the tiles of the map
+    /// All the tilesMap of the map
     /// </summary>
-    GameObject[] tiles;
+    GameObject[] tilesMap;
 
     Stack<Tile> path = new Stack<Tile>();
 
@@ -73,9 +73,9 @@ public class TacticsAction : MonoBehaviour
     {
         // TODO: 3
         Debug.Log("4. TacticsAction.Init() - BEGIN");
-        tiles = GameObject.FindGameObjectsWithTag("Tile");
+        tilesMap = GameObject.FindGameObjectsWithTag("Tile");
 
-        // Debug.Log(tiles.Length + " tiles.");
+        // Debug.Log(tilesMap.Length + " tilesMap.");
         halfHeight = GetComponent<Collider>().bounds.extents.y;
 
         // add ourselves to the turn manager (to the dictionnary)
@@ -104,22 +104,22 @@ public class TacticsAction : MonoBehaviour
     /// <summary>
     /// Compute each tile of the map and find the neighbors if needed.
     /// </summary>
-    public void ComputeAdjacencyLists(float jumpHeight, Tile target)
+    public void ComputeAdjacencyListsForMoving(float jumpHeight, Tile target)
     {
-        // For each tile of the map
-        foreach (GameObject tile in tiles)
+        // For each GO of the map
+        foreach (GameObject tile in tilesMap)
         {
             // Check if this is a tile
             Tile t = tile.GetComponent<Tile>();
 
             // else find the neighbors
-            t.FindNeighbors (jumpHeight, target);
+            t.FindNeighborsForMoving (jumpHeight, target);
         }
     }
 
     public void FindSelectableTiles()
     {
-        ComputeAdjacencyLists(jumpHeight, null);
+        ComputeAdjacencyListsForMoving(jumpHeight, null);
 
         GetCurrentTile();
 
@@ -137,7 +137,7 @@ public class TacticsAction : MonoBehaviour
 
             if (t.distance < move)
             {
-                foreach (Tile tile in t.adjacencyList)
+                foreach (Tile tile in t.adjacencyListForMoving)
                 {
                     if (!tile.visited)
                     {
@@ -154,7 +154,7 @@ public class TacticsAction : MonoBehaviour
     public void ComputeAdjacencyListsForAttack(float jumpHeight, Tile target)
     {
         // For each tile of the map
-        foreach (GameObject tile in tiles)
+        foreach (GameObject tile in tilesMap)
         {
             // Check if this is a tile
             Tile t = tile.GetComponent<Tile>();
@@ -184,7 +184,7 @@ public class TacticsAction : MonoBehaviour
 
             if (t.distance < attackRange)
             {
-                foreach (Tile tile in t.adjacencyList)
+                foreach (Tile tile in t.adjacencyListForShooting)
                 {
                     if (!tile.visited)
                     {
@@ -230,7 +230,7 @@ public class TacticsAction : MonoBehaviour
             // we add the tile to the path
             path.Push (next);
 
-            // and the parent tile becomes the next one, to start again until there are no more parent tiles, and the path has been traced.
+            // and the parent tile becomes the next one, to start again until there are no more parent tilesMap, and the path has been traced.
             next = next.parent;
         }
     }
@@ -291,7 +291,7 @@ public class TacticsAction : MonoBehaviour
         else
         // If a path does not exist (has not been defined by MoveToTile)
         {
-            // Delete the display of the accessible tiles.
+            // Delete the display of the accessible tilesMap.
             RemoveSelectableTiles();
 
             // define moving to false to give back the hand to this unit
@@ -440,13 +440,13 @@ public class TacticsAction : MonoBehaviour
 
     protected void FindPath(Tile target)
     {
-        ComputeAdjacencyLists (jumpHeight, target);
+        ComputeAdjacencyListsForMoving (jumpHeight, target);
         GetCurrentTile();
 
         // Any tile that has not been processed
         List<Tile> openList = new List<Tile>();
 
-        // All the tiles that have been processed
+        // All the tilesMap that have been processed
         List<Tile> closedList = new List<Tile>();
 
         openList.Add (currentTile);
@@ -470,7 +470,7 @@ public class TacticsAction : MonoBehaviour
                 return;
             }
 
-            foreach (Tile tile in t.adjacencyList)
+            foreach (Tile tile in t.adjacencyListForMoving)
             {
                 if (closedList.Contains(tile))
                 {
@@ -548,13 +548,13 @@ public class TacticsAction : MonoBehaviour
         return endTile;
     }
 
-    protected Tile FindLowestF(List<Tile> tiles)
+    protected Tile FindLowestF(List<Tile> tilesMap)
     {
         // Debug.Log("TacticsAction.FindLowestF()");
-        // Debug.Log("tiles : " + tiles.Count);
-        Tile lowest = tiles[0];
+        // Debug.Log("tilesMap : " + tilesMap.Count);
+        Tile lowest = tilesMap[0];
 
-        foreach (Tile t in tiles)
+        foreach (Tile t in tilesMap)
         {
             if (t.f < lowest.f)
             {
@@ -562,7 +562,7 @@ public class TacticsAction : MonoBehaviour
             }
         }
 
-        tiles.Remove (lowest);
+        tilesMap.Remove (lowest);
 
         return lowest;
     }
