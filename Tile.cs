@@ -36,9 +36,12 @@ public class Tile : MonoBehaviour
 
     /// <summary>
     /// can you shoot something that is on the tile
-
     /// </summary>
-    public bool accessibleToShooting = false;
+    public bool attackable = false;
+
+    public bool hasEnemy = false;
+
+    public bool hasSomethingOnIt = false;
 
     /// <summary>
     ///
@@ -99,6 +102,10 @@ public class Tile : MonoBehaviour
         {
             GetComponent<Renderer>().material.color = Color.magenta;
         }
+        if (hasSomethingOnIt && !current)
+        {
+            GetComponent<Renderer>().material.color = Color.black;
+        }
         else if (target)
         {
             GetComponent<Renderer>().material.color = Color.green;
@@ -111,9 +118,13 @@ public class Tile : MonoBehaviour
         {
             GetComponent<Renderer>().material.color = Color.yellow;
         }
-        else if (accessibleToShooting)
+        else if (attackable && !hasEnemy)
         {
             GetComponent<Renderer>().material.color = Color.cyan;
+        }
+        else if (attackable && hasEnemy)
+        {
+            GetComponent<Renderer>().material.color = Color.grey;
         }
         else
         {
@@ -129,6 +140,9 @@ public class Tile : MonoBehaviour
         target = false;
         selectable = false;
         selectableByNpc = false;
+        attackable = false;
+        hasEnemy = false;
+        hasSomethingOnIt = false;
 
         visited = false;
         parent = null;
@@ -150,6 +164,52 @@ public class Tile : MonoBehaviour
         CheckTile(-Vector3.forward, jumpHeight, target);
         CheckTile(Vector3.right, jumpHeight, target);
         CheckTile(-Vector3.right, jumpHeight, target);
+    }
+
+    public void CheckTileForShooting(
+        Vector3 direction,
+        float jumpHeight,
+        Tile target
+    )
+    {
+        // Half the size of the box in each dimension.
+        Vector3 halfExtents =
+            new Vector3(0.25f, (tileHeight + jumpHeight) / 2, 0.25f);
+
+        // Find all colliders touching or inside of the given box.
+        Collider[] colliders =
+            Physics.OverlapBox(transform.position + direction, halfExtents);
+
+        // For each collider
+        foreach (Collider item in colliders)
+        {
+            // get the tile object
+            Tile tile = item.GetComponent<Tile>();
+
+            // There is a tile and we can get there.
+            if (tile != null && tile.walkable)
+            {
+                // make sure there is nothing on top of the tile and if so, add it to the adjacency list.
+                RaycastHit hit;
+
+                if (
+                    !Physics
+                        .Raycast(tile.transform.position,
+                        Vector3.up,
+                        out hit,
+                        1) ||
+                    (tile == target)
+                )
+                {
+                    adjacencyList.Add (tile);
+                }
+                else
+                {
+                    tile.hasEnemy = true;
+                    adjacencyList.Add (tile);
+                }
+            }
+        }
     }
 
     /// <summary>
@@ -175,7 +235,7 @@ public class Tile : MonoBehaviour
             if (tile != null && tile.walkable)
             {
                 // make sure there is nothing on top of the tile and if so, add it to the adjacency list.
-                RaycastHit hit;                
+                RaycastHit hit;
                 if (
                     !Physics
                         .Raycast(tile.transform.position,
@@ -187,7 +247,22 @@ public class Tile : MonoBehaviour
                 {
                     adjacencyList.Add (tile);
                 }
+                else
+                {
+                    tile.hasSomethingOnIt = true;
+                    adjacencyList.Add (tile);
+                }
             }
         }
+    }
+
+    public void FindNeighborsForShooting(float jumpHeight, Tile target)
+    {
+        Reset();
+
+        CheckTileForShooting(Vector3.forward, jumpHeight, target);
+        CheckTileForShooting(-Vector3.forward, jumpHeight, target);
+        CheckTileForShooting(Vector3.right, jumpHeight, target);
+        CheckTileForShooting(-Vector3.right, jumpHeight, target);
     }
 }

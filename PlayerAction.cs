@@ -9,6 +9,8 @@ public class PlayerAction : TacticsAction
 {
     public static bool displayMovingForPlayer = true;
 
+    public static bool displayFiringForPlayer = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -38,6 +40,15 @@ public class PlayerAction : TacticsAction
             {
                 RemoveSelectableTiles();
             }
+            if (displayFiringForPlayer)
+            {
+                FindAttackableTiles();
+            }
+            else if (!displayFiringForPlayer)
+            {
+                RemoveAttackableTiles();
+            }
+
             CheckMouse();
         }
         else if (moving)

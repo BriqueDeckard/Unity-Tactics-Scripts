@@ -7,6 +7,8 @@ public class TacticsAction : MonoBehaviour
 {
     protected List<Tile> selectableTiles = new List<Tile>();
 
+    protected List<Tile> attackableTiles = new List<Tile>();
+
     /// <summary>
     /// All the tiles of the map
     /// </summary>
@@ -20,6 +22,8 @@ public class TacticsAction : MonoBehaviour
     /// Move capability of the player
     /// </summary>
     public int move = 5;
+
+    public int attackRange = 6;
 
     /// <summary>
     /// Jump height capability of the player
@@ -107,10 +111,6 @@ public class TacticsAction : MonoBehaviour
         {
             // Check if this is a tile
             Tile t = tile.GetComponent<Tile>();
-            if (t == null)
-            {
-                return;
-            }
 
             // else find the neighbors
             t.FindNeighbors (jumpHeight, target);
@@ -149,6 +149,69 @@ public class TacticsAction : MonoBehaviour
                 }
             }
         }
+    }
+
+    public void ComputeAdjacencyListsForAttack(float jumpHeight, Tile target)
+    {
+        // For each tile of the map
+        foreach (GameObject tile in tiles)
+        {
+            // Check if this is a tile
+            Tile t = tile.GetComponent<Tile>();
+
+            // else find the neighbors
+            t.FindNeighborsForShooting (jumpHeight, target);
+        }
+    }
+
+    public void FindAttackableTiles()
+    {
+        ComputeAdjacencyListsForAttack(jumpHeight, null);
+
+        GetCurrentTile();
+
+        Queue<Tile> process = new Queue<Tile>();
+
+        process.Enqueue (currentTile);
+        currentTile.visited = true;
+
+        while (process.Count > 0)
+        {
+            Tile t = process.Dequeue();
+
+            attackableTiles.Add (t);
+            t.attackable = true;
+
+            if (t.distance < attackRange)
+            {
+                foreach (Tile tile in t.adjacencyList)
+                {
+                    if (!tile.visited)
+                    {
+                        tile.parent = t;
+                        tile.visited = true;
+                        tile.distance = 1 + t.distance;
+                        process.Enqueue (tile);
+                    }
+                }
+            }
+        }
+    }
+
+    protected void RemoveAttackableTiles()
+    {
+        Debug.Log("TacticsAction.RemoveAttackableTiles() - BEGIN");
+        if (currentTile != null)
+        {
+            currentTile.current = false;
+            currentTile = null;
+        }
+        foreach (Tile tile in attackableTiles)
+        {
+            tile.Reset();
+        }
+        attackableTiles.Clear();
+        Debug.Log("TacticsAction.RemoveAttackableTiles() - END");
     }
 
     public void MoveToTile(Tile tile)
@@ -211,11 +274,12 @@ public class TacticsAction : MonoBehaviour
                 // Locomotion
                 // Set the direction of this unit
                 transform.forward = heading;
+
                 // Initiate the movement of this unit
                 transform.position += velocity * Time.deltaTime;
             }
-            // The distance between this unit and the target tile is not significant
             else
+            // The distance between this unit and the target tile is not significant
             {
                 // Tile center reached
                 transform.position = target;
@@ -224,13 +288,15 @@ public class TacticsAction : MonoBehaviour
                 path.Pop();
             }
         }
-        // If a path does not exist (has not been defined by MoveToTile)
         else
+        // If a path does not exist (has not been defined by MoveToTile)
         {
             // Delete the display of the accessible tiles.
             RemoveSelectableTiles();
+
             // define moving to false to give back the hand to this unit
             moving = false;
+
             // End the turn
             TurnManager.EndTurn();
         }
@@ -253,6 +319,7 @@ public class TacticsAction : MonoBehaviour
     void CalculateHeadingTo(Vector3 target)
     {
         heading = target - transform.position;
+
         // Makes this vector have a magnitude of 1.
         // When normalized, a vector keeps the same direction but its length is 1.0.
         heading.Normalize();
