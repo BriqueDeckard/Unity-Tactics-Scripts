@@ -79,12 +79,13 @@ public class PlayerAction : TacticsAction
 
             if (Physics.Raycast(ray, out hit))
             {
+                Debug.Log("Hey ! ");
                 if (hit.collider.tag == "Tile")
                 {
                     Debug.Log("Its a tile");
                     Tile t = hit.collider.GetComponent<Tile>();
 
-                    if (t.selectable)
+                    if (t.selectable && displayMovingForPlayer)
                     {
                         Debug.Log("Selectable");
                         if (!t.hasSomethingOnIt)
@@ -96,7 +97,7 @@ public class PlayerAction : TacticsAction
                             }
                         }
                     }
-                    else if (t.attackable)
+                    else if (t.attackable && displayFiringForPlayer)
                     {
                         Debug.Log("Attackable");
                         if (t.hasEnemy || t.hasSomethingOnIt)

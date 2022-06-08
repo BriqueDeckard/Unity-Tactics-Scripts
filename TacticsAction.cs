@@ -18,6 +18,8 @@ public class TacticsAction : MonoBehaviour
 
     Stack<Tile> path = new Stack<Tile>();
 
+    Stack<Tile> shootingZone = new Stack<Tile>();
+
     protected Tile currentTile;
 
     /// <summary>
@@ -239,14 +241,26 @@ public class TacticsAction : MonoBehaviour
 
     public void ShootTheTile(Tile tile)
     {
+        Debug.Log("TacticsAction.ShootTheTile() - BEGIN");
         tile.target = true;
 
         firing = true;
+
+        // -- CREATE THE SHOOTING ZONE
+        Tile targetForShoot = tile;
+
+        shootingZone.Push (targetForShoot);
+        Debug.Log("TacticsAction.ShootTheTile() - END");
     }
 
     public void Shoot()
     {
         Debug.Log("Shoot");
+
+        if (shootingZone.Count > 0)
+        {
+            Debug.Log("FIRE ! ");
+        }
 
         firing = false;
 
