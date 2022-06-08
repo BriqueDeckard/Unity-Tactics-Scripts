@@ -9,6 +9,8 @@ public class TacticsAction : MonoBehaviour
 
     protected List<Tile> attackableTiles = new List<Tile>();
 
+    public TacticsHealth health;
+
     /// <summary>
     /// All the tilesMap of the map
     /// </summary>
@@ -200,7 +202,7 @@ public class TacticsAction : MonoBehaviour
 
     protected void RemoveAttackableTiles()
     {
-        Debug.Log("TacticsAction.RemoveAttackableTiles() - BEGIN");
+        // Debug.Log("TacticsAction.RemoveAttackableTiles() - BEGIN");
         if (currentTile != null)
         {
             currentTile.current = false;
@@ -211,7 +213,7 @@ public class TacticsAction : MonoBehaviour
             tile.Reset();
         }
         attackableTiles.Clear();
-        Debug.Log("TacticsAction.RemoveAttackableTiles() - END");
+        // Debug.Log("TacticsAction.RemoveAttackableTiles() - END");
     }
 
     public void MoveToTile(Tile tile)
@@ -222,7 +224,7 @@ public class TacticsAction : MonoBehaviour
         // We set moving to true so that the "update" method of the current team (player or NPC) can launch the "Move()" method.
         moving = true;
 
-        // -- CREATE THE PATCH
+        // -- CREATE THE PATH
         // We start from the target tile.
         Tile next = tile;
         while (next != null)
@@ -233,6 +235,23 @@ public class TacticsAction : MonoBehaviour
             // and the parent tile becomes the next one, to start again until there are no more parent tilesMap, and the path has been traced.
             next = next.parent;
         }
+    }
+
+    public void ShootTheTile(Tile tile)
+    {
+        tile.target = true;
+
+        firing = true;
+    }
+
+    public void Shoot()
+    {
+        Debug.Log("Shoot");
+
+        firing = false;
+
+        // End the turn
+        TurnManager.EndTurn();
     }
 
     /// <summary>

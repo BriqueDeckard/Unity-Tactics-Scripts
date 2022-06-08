@@ -3,20 +3,24 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Npc movement
+/// Npc action
 /// </summary>
 public class NPCAction : TacticsAction
 {
-    GameObject target;
-
     /// <summary>
     /// Target where to move
-    /// </summary>
+    /// </summary> 
+    GameObject target;
+    
     // Start is called before the first frame update
     void Start()
     {
         Debug.Log("11. NPCAction.Start() - BEGIN");
         Init();
+
+        health = FindObjectOfType<NPCHealth>();
+        Debug.Log("Npc health: " + health.health);
+
         Debug.Log("12. NPCAction.Start() - END");
     }
 

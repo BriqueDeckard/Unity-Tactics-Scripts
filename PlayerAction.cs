@@ -16,6 +16,8 @@ public class PlayerAction : TacticsAction
     {
         Debug.Log("3. PlayerAction.Start() - BEGIN");
         Init();
+        health = FindObjectOfType<PlayerHealth>();
+        Debug.Log("Player health: " + health.health);
         Debug.Log("10. PlayerAction.Start() - END");
     }
 
@@ -55,6 +57,11 @@ public class PlayerAction : TacticsAction
         {
             Move();
         }
+        else if (firing)
+        {
+            Debug.Log("Shoot");
+            Shoot();
+        }
     }
 
     /// <summary>
@@ -74,11 +81,39 @@ public class PlayerAction : TacticsAction
             {
                 if (hit.collider.tag == "Tile")
                 {
+                    Debug.Log("Its a tile");
                     Tile t = hit.collider.GetComponent<Tile>();
 
-                    if (t.selectable && !t.hasSomethingOnIt)
+                    if (t.selectable)
                     {
-                        MoveToTile (t);
+                        Debug.Log("Selectable");
+                        if (!t.hasSomethingOnIt)
+                        {
+                            Debug.Log("has not something on it");
+                            if (displayMovingForPlayer)
+                            {
+                                MoveToTile (t);
+                            }
+                        }
+                    }
+                    else if (t.attackable)
+                    {
+                        Debug.Log("Attackable");
+                        if (t.hasEnemy || t.hasSomethingOnIt)
+                        {
+                            Debug
+                                .Log(t.hasEnemy
+                                    ? "has enemy"
+                                    : "has something on it");
+                            if (displayFiringForPlayer)
+                            {
+                                ShootTheTile (t);
+                            }
+                        }
+                        else
+                        {
+                            Debug.Log("has nothing on it");
+                        }
                     }
                 }
             }
