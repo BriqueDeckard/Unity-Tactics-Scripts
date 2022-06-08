@@ -17,6 +17,7 @@ public class PlayerAction : TacticsAction
         Debug.Log("3. PlayerAction.Start() - BEGIN");
         Init();
         health = FindObjectOfType<PlayerHealth>();
+        firepower = 10;
         Debug.Log("Player health: " + health.health);
         Debug.Log("10. PlayerAction.Start() - END");
     }

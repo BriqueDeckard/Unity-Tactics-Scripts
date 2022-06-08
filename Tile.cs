@@ -218,7 +218,11 @@ public class Tile : MonoBehaviour
     /// <summary>
     ///
     /// </summary>
-    public void CheckTileForMoving(Vector3 direction, float jumpHeight, Tile target)
+    public void CheckTileForMoving(
+        Vector3 direction,
+        float jumpHeight,
+        Tile target
+    )
     {
         // Half the size of the box in each dimension.
         Vector3 halfExtents =
@@ -267,5 +271,22 @@ public class Tile : MonoBehaviour
         CheckTileForShooting(-Vector3.forward, jumpHeight, target);
         CheckTileForShooting(Vector3.right, jumpHeight, target);
         CheckTileForShooting(-Vector3.right, jumpHeight, target);
+    }
+
+    public Collider FindTargetOnTopOfTheTile()
+    {
+        Debug.Log("Tile.FindTargetOnTopOfTheTile");
+        Collider[] colliders =
+            Physics.OverlapBox(transform.position, Vector3.up);
+
+        Debug
+            .Log("Tile.FindTargetOnTopOfTheTile: Colliders: " +
+            colliders.Length);
+
+        if (colliders.Length > 0)
+        {
+            return colliders[0];
+        }
+        return null;
     }
 }

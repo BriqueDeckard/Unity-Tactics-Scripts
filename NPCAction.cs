@@ -9,9 +9,10 @@ public class NPCAction : TacticsAction
 {
     /// <summary>
     /// Target where to move
-    /// </summary> 
+    /// </summary>
+
     GameObject target;
-    
+
     // Start is called before the first frame update
     void Start()
     {
@@ -21,11 +22,13 @@ public class NPCAction : TacticsAction
         health = FindObjectOfType<NPCHealth>();
         Debug.Log("Npc health: " + health.health);
 
+        firepower = 5;
+
         Debug.Log("12. NPCAction.Start() - END");
     }
 
-
-    new public void FindSelectableTiles(){
+    public new void FindSelectableTiles()
+    {
         ComputeAdjacencyListsForMoving(jumpHeight, null);
 
         GetCurrentTile();

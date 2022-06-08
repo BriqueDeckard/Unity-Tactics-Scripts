@@ -29,6 +29,8 @@ public class TacticsAction : MonoBehaviour
 
     public int attackRange = 6;
 
+    public int firepower = 10;
+
     /// <summary>
     /// Jump height capability of the player
     /// </summary>
@@ -260,6 +262,19 @@ public class TacticsAction : MonoBehaviour
         if (shootingZone.Count > 0)
         {
             Debug.Log("FIRE ! ");
+            Tile t = shootingZone.Peek();
+
+            Collider collider = t.FindTargetOnTopOfTheTile();
+            if (collider == null)
+            {
+                return;
+            }
+            string tag = collider.tag;
+            if ((tag == "Player") || (tag == "NPC"))
+            {
+                TacticsHealth health = collider.GetComponent<TacticsHealth>();
+                health.health = health.health - firepower;
+            }
         }
 
         firing = false;
@@ -277,7 +292,7 @@ public class TacticsAction : MonoBehaviour
         if (path.Count > 0)
         {
             // We create a vector that corresponds to the position of the tile that is on top of the stack
-            Debug.Log("TacticsAction.Move() - path.Count: " + path.Count);
+            // Debug.Log("TacticsAction.Move() - path.Count: " + path.Count);
             Tile t = path.Peek();
             Vector3 target = t.transform.position;
 

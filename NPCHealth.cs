@@ -13,5 +13,10 @@ public class NPCHealth : TacticsHealth
     // Update is called once per frame
     void Update()
     {
+        if (health <= 0)
+        {
+            Debug.Log("DEAD");
+            Destroy(transform.gameObject);
+        }
     }
 }
