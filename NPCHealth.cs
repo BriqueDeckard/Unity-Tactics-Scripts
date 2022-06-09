@@ -16,7 +16,38 @@ public class NPCHealth : TacticsHealth
         if (health <= 0)
         {
             Debug.Log("DEAD");
+            NPCAction nPCAction = GetComponent<NPCAction>();
+            nPCAction.RemoveSelectableTiles();
             Destroy(transform.gameObject);
+        }
+        if (Input.GetMouseButtonDown(0))
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+
+            if (Physics.Raycast(ray, out hit))
+            {
+                //Select stage
+                if (hit.transform.name == "NPC")
+                {
+                    if (PlayerAction.displayFiringForPlayer)
+                    {
+                        Debug.Log("NPC.Hey !");
+                    }
+                    else
+                    {
+                        Debug.Log("NPC.Ho ! ");
+                    }
+                }
+            }
+        }
+
+        if (attackable)
+        {
+            Debug.Log("NPC is Attackable");
+            Material redMaterial =
+                Resources.Load("red", typeof (Material)) as Material;
+            gameObject.GetComponent<Renderer>().material = redMaterial;
         }
     }
 }

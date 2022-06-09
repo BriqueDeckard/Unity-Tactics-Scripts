@@ -13,6 +13,12 @@ public class PlayerHealth : TacticsHealth
     // Update is called once per frame
     void Update()
     {
-      
+        if (attackable)
+        {
+            Debug.Log("Attackable");
+            Material redMaterial =
+                Resources.Load("red", typeof (Material)) as Material;
+            gameObject.GetComponent<Renderer>().material = redMaterial;
+        }
     }
 }

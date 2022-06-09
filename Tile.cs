@@ -112,7 +112,7 @@ public class Tile : MonoBehaviour
         {
             GetComponent<Renderer>().material.color = Color.green;
         }
-        else if (selectable)
+        if (selectable)
         {
             GetComponent<Renderer>().material.color = Color.red;
         }
@@ -120,17 +120,17 @@ public class Tile : MonoBehaviour
         {
             GetComponent<Renderer>().material.color = Color.yellow;
         }
-        else if (attackable && !hasEnemy)
-        {
-            GetComponent<Renderer>().material.color = Color.cyan;
-        }
-        else if (attackable && hasEnemy)
-        {
-            GetComponent<Renderer>().material.color = Color.grey;
-        }
         else
         {
             GetComponent<Renderer>().material.color = Color.white;
+        }
+        if (attackable && !hasEnemy)
+        {
+            // GetComponent<Renderer>().material.color = Color.cyan;
+        }
+        else if (attackable && hasEnemy && !current)
+        {
+            GetComponent<Renderer>().material.color = Color.cyan;
         }
     }
 
@@ -208,7 +208,11 @@ public class Tile : MonoBehaviour
                 }
                 else
                 {
-                    tile.hasEnemy = true;
+                    if (!tile.current)
+                    {
+                        tile.hasEnemy = true;
+                    }
+
                     adjacencyListForShooting.Add (tile);
                 }
             }

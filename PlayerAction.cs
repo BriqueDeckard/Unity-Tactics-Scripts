@@ -60,7 +60,7 @@ public class PlayerAction : TacticsAction
         }
         else if (firing)
         {
-            Debug.Log("Shoot");
+            //Debug.Log("Shoot");
             Shoot();
         }
     }
@@ -80,7 +80,6 @@ public class PlayerAction : TacticsAction
 
             if (Physics.Raycast(ray, out hit))
             {
-                Debug.Log("Hey ! ");
                 if (hit.collider.tag == "Tile")
                 {
                     Debug.Log("Its a tile");

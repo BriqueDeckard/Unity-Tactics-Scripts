@@ -20,7 +20,7 @@ public class NPCAction : TacticsAction
         Init();
 
         health = FindObjectOfType<NPCHealth>();
-        Debug.Log("Npc health: " + health.health);
+        // Debug.Log("Npc health: " + health.health);
 
         firepower = 5;
 

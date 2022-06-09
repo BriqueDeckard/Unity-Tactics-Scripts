@@ -257,24 +257,22 @@ public class TacticsAction : MonoBehaviour
 
     public void Shoot()
     {
-        Debug.Log("Shoot");
+        //Debug.Log("Shoot");
 
         if (shootingZone.Count > 0)
         {
-            Debug.Log("FIRE ! ");
+            //Debug.Log("FIRE ! ");
             Tile t = shootingZone.Peek();
 
             Collider collider = t.FindTargetOnTopOfTheTile();
+            Debug.Log("Collider: " + collider == null + " " + collider);
             if (collider == null)
             {
                 return;
             }
-            string tag = collider.tag;
-            if ((tag == "Player") || (tag == "NPC"))
-            {
-                TacticsHealth health = collider.GetComponent<TacticsHealth>();
-                health.health = health.health - firepower;
-            }
+
+            TacticsHealth health = collider.GetComponent<TacticsHealth>();
+            health.health = health.health - firepower;
         }
 
         firing = false;
@@ -350,7 +348,7 @@ public class TacticsAction : MonoBehaviour
         }
     }
 
-    protected void RemoveSelectableTiles()
+    public void RemoveSelectableTiles()
     {
         if (currentTile != null)
         {

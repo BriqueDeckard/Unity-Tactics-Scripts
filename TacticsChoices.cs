@@ -13,9 +13,7 @@ public class TacticsChoices : MonoBehaviour
         {
             PlayerAction.displayFiringForPlayer = false;
         }
-        Debug
-            .Log("TacticsChoices.TogglePlayerMoving - PlayerAction.displayMovingForPlayer : " +
-            PlayerAction.displayMovingForPlayer);
+        // Debug.Log("TacticsChoices.TogglePlayerMoving - PlayerAction.displayMovingForPlayer : " + PlayerAction.displayMovingForPlayer);
     }
 
     public static void TogglePlayerShooting()
@@ -28,9 +26,7 @@ public class TacticsChoices : MonoBehaviour
             PlayerAction.displayMovingForPlayer = false;
         }
 
-        Debug
-            .Log("TacticsChoices.TogglePlayerShooting - PlayerAction.displayFiringForPlayer : " +
-            PlayerAction.displayFiringForPlayer);
+        // Debug.Log("TacticsChoices.TogglePlayerShooting - PlayerAction.displayFiringForPlayer : " + PlayerAction.displayFiringForPlayer);
     }
 
     // Start is called before the first frame update
